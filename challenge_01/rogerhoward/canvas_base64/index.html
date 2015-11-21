@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ASCII Art to Image</title>
+
+<script src="FileSaver.min.js"></script>
+<script src="canvas-toBlob.js"></script>
+<style type="text/css">
+    textarea {
+        font-family: monospace;
+    }
+
+</style>
+
+</head>
+
+<body>
+
+<textarea id="user-content" cols="80" rows="10">
+                                            xk                              
+                                         .lOk.                              
+                      'ox'            'oOOl.                                
+                    ;xx:.           .dkc.                                   
+                   dNl             'XO.                                     
+                  .Xd              dW;                                      
+                  .KO.             lWo                                      
+                   ,kO:.            ,oxdl:,'...                             
+                     .oOOxl;.          .,codxkOOOd'                         
+                        .';ldxd'                .;xOc                       
+                              ,O0,                 :X;                      
+                               .00.                cX;                      
+                               .00.              'xKc                       
+                             .o0x'           .,lk0:                         
+                          .lkxc.       .;oddddl:'                           
+                          xO.       'o0Oo,.                                 
+                         'N;      .kOc.                                     
+                          xO'     kd                                        
+                           oXx.   kx                                        
+                            .ckdc',OO:                                      
+                               'lxl.;x:                                     
+             .oxxxkkkkkkkOOOOOOO0000000000KKKKKKKKKKKKKKKK00'               
+             ,XMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMl   ':cc:,.     
+             ;NMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMOlOXMMMWMMWKd.  
+             cWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMWk:....;oKMWk.
+             lMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMK,        .OMMO
+             oMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMd          cMMX
+             dMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM0.         kMM0
+             dMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMXd,.  .'cOMW0,
+             dMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNWMMNKKNMMMXc  
+             dMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMc.:oxkkxoc,.   
+             dMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM;              
+             oMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM;              
+             :WMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMW'              
+             .KMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMK.              
+              xMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMd               
+              ,WMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMN,               
+               lWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNc                
+                cXWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWx.                 
+                  .......................................                   
+.:dOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOk;    
+  .lKMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNc     
+     'ckXWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMWNO,      
+        .:xKXXXXNNNNNNNNNWWWWWWWWWWWMMMMMMMMMMMMMMMMMMMMWWWWNXK0kdc'
+</textarea>
+
+<br>
+<br>
+
+<canvas id="my-canvas" width="1200" height="1400">
+</canvas>
+
+<script>
+    function wrapText(context, text, x, y, line_width, line_height)
+    {
+        var line = '';
+        var paragraphs = text.split('\n');
+        for (var i = 0; i < paragraphs.length; i++)
+        {
+            var words = paragraphs[i].split(' ');
+            for (var n = 0; n < words.length; n++)
+            {
+                var testLine = line + words[n] + ' ';
+                var metrics = context.measureText(testLine);
+                var testWidth = metrics.width;
+                if (testWidth > line_width && n > 0)
+                {
+                    context.fillText(line, x, y);
+                    line = words[n] + ' ';
+                    y += line_height;
+                }
+                else
+                {
+                    line = testLine;
+                }
+            }
+            context.fillText(line, x, y);
+            y += line_height;
+            line = '';
+        }
+    }
+
+
+    function saveCanvas(canvasID) {
+        var userContent = document.getElementById("user-content").value;
+        var canvas = document.getElementById(canvasID);
+        var ctx = canvas.getContext("2d");
+
+        ctx.font = "9px Monospace";
+        ctx.fillStyle = '#333';
+        ctx.fillText(userContent,10,40);
+
+        var maxWidth = 1200;
+        var lineHeight = 14;
+        var x = (canvas.width - maxWidth) / 2;
+        var y = 70;
+
+        wrapText(ctx, userContent, x, y, maxWidth, lineHeight);
+
+
+        canvas.toBlob(function(blob) {
+            saveAs(blob, "pretty image.png");
+        });
+    }
+
+    saveCanvas("my-canvas");
+
+</script>
+
+
+</body>
+
+</html>
